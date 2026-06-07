@@ -783,3 +783,59 @@ Here is the output of the program:
 [Main] Item: Phone, Price: 500
 [Main] Program ended
 ```
+
+## Bridge Pattern
+Bridge Pattern is a structural design pattern that allows you to separate the abstraction from the implementation so that the two can vary independently. For example, you have an order system for your e-commerce website and you have two different types of orders: standard and express and two different types of payments: credit card and bank transfer. You want to separate the order processing from the payment processing and you only know the interface of payment processing. With Bridge Pattern, you can separate these two but still be able to call the payment processing method from the order processing. Here is an example of Bridge pattern in Python:
+
+```python
+class PaymentImplementor:
+    def execute_payment(self, amount: float) -> None:
+        pass
+
+class CreditCardPayment(PaymentImplementor):
+    def execute_payment(self, amount: float) -> None:
+        print(f"[CreditCardPayment] Executing payment of ${amount}...")
+
+class BankTransferPayment(PaymentImplementor):
+    def execute_payment(self, amount: float) -> None:
+        print(f"[BankTransferPayment] Executing payment of ${amount}...")
+
+class Order:
+    def __init__(self, amount: float, payment_implementor: PaymentImplementor):
+        self.amount = amount
+        self.payment_implementor = payment_implementor
+    
+    def process(self) -> None:
+        pass
+
+class StandardOrder(Order):
+    def process(self) -> None:
+        print(f"[StandardOrder] Processing order...")
+        self.payment_implementor.execute_payment(self.amount)
+        
+
+class ExpressOrder(Order):
+    def process(self) -> None:
+        print(f"[ExpressOrder] Processing order...")
+        self.payment_implementor.execute_payment(self.amount + 10)
+
+print("[Main] Starting the program")
+credit_card_payment = CreditCardPayment()
+bank_transfer_payment = BankTransferPayment()
+standard_order = StandardOrder(100, credit_card_payment)
+standard_order.process()
+express_order = ExpressOrder(100, bank_transfer_payment)
+express_order.process()
+print("[Main] Program ended")
+```
+
+Here is the output of the program:
+
+```
+[Main] Starting the program
+[StandardOrder] Processing order...
+[CreditCardPayment] Executing payment of $100...
+[ExpressOrder] Processing order...
+[BankTransferPayment] Executing payment of $110...
+[Main] Program ended
+```
