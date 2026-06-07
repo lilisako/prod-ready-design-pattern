@@ -55,3 +55,70 @@ Here is the output of the program:
 [Shipping] Label: International Shipping Label
 [Main] Program ended
 ```
+
+## Problem with Template method pattern
+Template method pattern is quite simple but it's not very flexible. Especially when you want to add a new method to the interface, you need to make sure that all the subclasses behave correctly. 
+
+For example, you have different types of users in your system: premium, guest, basic, etc. And you want to add a new user action to only premium users, but not other users. Here is an example in Go:
+
+As you can see that Guest User and Basic User don't have the new user action and but still need to implement those methods. This will lead to code duplication and it becomes harder to read and understand the code.
+
+```go
+type UserAction interface {
+    LogIn()
+    SaveToDatabase()
+    GiveBonusPoints()
+    GenerateMonthlyReport()
+}
+
+type PremiumUser struct {}
+func (u *PremiumUser) LogIn() {
+    fmt.Println("Premium user logged in")
+}
+func (u *PremiumUser) SaveToDatabase() {
+    fmt.Println("Premium user saved to database")
+}
+func (u *PremiumUser) GiveBonusPoints() {
+    fmt.Println("Premium user gives 100 bonus points")
+}
+func (u *PremiumUser) GenerateMonthlyReport() {
+    fmt.Println("Premium user generates monthly report")
+}
+
+func GuestUser struct {}
+func (u *GuestUser) LogIn() {
+    fmt.Println("Guest user logged in")
+}
+func (u *GuestUser) SaveToDatabase() {
+    // Do nothing
+}
+func (u *GuestUser) GiveBonusPoints() {
+    // Do nothing
+}
+func (u *GuestUser) GenerateMonthlyReport() {
+    // Do nothing
+}
+
+func BasicUser struct {}
+func (u *BasicUser) LogIn() {
+    fmt.Println("Basic user logged in")
+}
+func (u *BasicUser) SaveToDatabase() {
+    fmt.Println("Basic user saved to database")
+}
+func (u *BasicUser) GiveBonusPoints() {
+    // Do nothing
+}
+func (u *BasicUser) GenerateMonthlyReport() {
+    // Do nothing
+}
+
+func main() {
+    for _, user := range users {
+        user.LogIn()
+        user.SaveToDatabase()
+        user.GiveBonusPoints()
+        user.GenerateMonthlyReport()
+    }
+}
+```
