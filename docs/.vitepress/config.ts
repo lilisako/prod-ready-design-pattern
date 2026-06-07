@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Design Patterns in Python',
   description: 'Production-ready design patterns in Python with E-Commerce examples',
-  base: '/prod-ready-design-pattern/',
+  base: '/',
   themeConfig: {
     nav: [
       { text: 'About', link: '/' },
