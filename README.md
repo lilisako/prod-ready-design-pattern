@@ -447,3 +447,274 @@ Here is the output of the program:
 [FraudCheckerHandler] Amount is too high, order cancelled
 [Main] Program ended
 ```
+
+## Command Pattern
+Command Pattern is a behavioral design pattern that allows you to encapsulate a request as an object, which can be parameterized and passed to other objects. This pattern is useful when you want to parameterize methods with different arguments. 
+
+For example, you have a shopping cart and you want to allow the user to add an item to the cart, undo the last action etc. When the last action is adding an item to the cart and you want to undo it, you need to remove the item from the cart. With Command pattern, you can easily add a new command without changing the existing code. Also when you call undo, you don't need to know the details of the command. You just need to call the undo method of the command.
+
+
+```python
+class ShoppingCart:
+    def __init__(self):
+        self.items = []
+    
+    def add_item(self, item: str):
+        self.items.append(item)
+    
+    def remove_item(self, item: str):
+        self.items.remove(item)
+    
+    
+class Command:
+    def execute(self) -> None:
+        pass 
+    
+    def undo(self) -> None:
+        pass
+
+class AddItemCommand(Command):
+    def __init__(self, shopping_cart: ShoppingCart, item: str):
+        self.shopping_cart = shopping_cart
+        self.item = item
+    
+    def execute(self) -> None:
+        self.shopping_cart.add_item(self.item)
+        print(f"[AddItemCommand] Added item: {self.item}")
+    
+    def undo(self) -> None:
+        self.shopping_cart.remove_item(self.item)
+        print(f"[AddItemCommand] Removed item: {self.item}")
+
+class CartHistoryManager:
+    def __init__(self):
+        self.history = []
+    
+    def add_command(self, command: Command):
+        command.execute()
+        self.history.append(command)
+    
+    def undo_last_command(self):
+        if self.history:
+            self.history.pop().undo()
+        else:
+            print("[CartHistoryManager] No commands to undo")
+ 
+print("[Main] Starting the program")
+shopping_cart = ShoppingCart()
+cart_history_manager = CartHistoryManager()
+cart_history_manager.add_command(AddItemCommand(shopping_cart, "Laptop"))
+cart_history_manager.add_command(AddItemCommand(shopping_cart, "Keyboard"))
+cart_history_manager.add_command(AddItemCommand(shopping_cart, "Monitor"))
+cart_history_manager.undo_last_command()
+print(f"[Main] Shopping cart items: {shopping_cart.items}")
+print("[Main] Program ended")
+```
+
+Here is the output of the program:
+
+```
+[Main] Starting the program
+[AddItemCommand] Added item: Laptop
+[AddItemCommand] Added item: Keyboard
+[AddItemCommand] Added item: Monitor
+[AddItemCommand] Removed item: Monitor
+[Main] Shopping cart items: ['Laptop', 'Keyboard']
+[Main] Program ended
+```
+
+## Adapter Pattern
+Adapter pattern is a structural design pattern that allows you to adapt an interface to another interface. For example, you have a payment system for your e-commerce website and you want to use a third-party payment gateway like Stripe. With Adapter pattern, you can easily adapt the Stripe API to the payment system interface. Let's say the third party payment gateway has a different interface(make_charge() method) than the payment system interface(pay() method).
+
+Here is an example of Adapter pattern in Python:
+
+```python
+
+class PaymentStrategy:
+    def pay(self, amount: float) -> None:
+        pass
+
+class CreditCardPayment(PaymentStrategy):
+    def pay(self, amount: float) -> None:
+        print(f"[Strategy] Paying {amount} with credit card")
+
+class StripeExternalAPI:
+    def make_charge(self, amount: float) -> None:
+        print(f"[API] Making charge of {amount} with Stripe")
+
+class StripeExternalAdapter(PaymentStrategy):
+    def __init__(self, stripe_external_api: StripeExternalAPI):
+        self.stripe_external_api = stripe_external_api
+
+    def pay(self, amount: float) -> None:
+        self.stripe_external_api.make_charge(amount)
+        print(f"[Adapter] Paying {amount} with Stripe")
+
+print("[Main] Starting the program")
+stripe_external_api = StripeExternalAPI()
+stripe_external_adapter = StripeExternalAdapter(stripe_external_api)
+stripe_external_adapter.pay(100)
+print("[Main] Program ended")
+```
+
+Here is the output of the program:
+
+```
+[Main] Starting the program
+[API] Making charge of 100 with Stripe
+[Adapter] Paying 100 with Stripe
+[Main] Program ended
+```
+
+## Factory Method Pattern
+Factory Method Pattern is a creational design pattern that provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created. 
+
+For example, you have a order system for your e-commerce website and you want to create a different order for physical and digital products. For both of the orders, you need a different process to fulfill the order. With Factory method pattern, you can easily create a different order without changing the existing code. When you call the fulfill_order() method, you don't need to know the details of the order. You just need to call the fulfill_order() method and the order will be created and processed.
+
+```python
+class Order:
+    def __init__(self, amount: float):
+        self.amount = amount
+    
+    def process(self) -> None:
+        pass
+
+class PhysicalOrder(Order):
+    def process(self) -> None:
+        print(f"[PhysicalOrder] Processing order of ${self.amount}")
+
+class DigitalOrder(Order):
+    def process(self) -> None:
+        print(f"[DigitalOrder] Processing order of ${self.amount}")
+
+class OrderFactory:
+    def create_order(self, amount: float) -> Order:
+        pass
+    
+    def fulfill_order(self, amount: float) -> None:
+        order = self.create_order(amount)
+        order.process()
+
+class PhysicalOrderFactory(OrderFactory):
+    def create_order(self, amount: float) -> Order:
+        return PhysicalOrder(amount)
+
+class DigitalOrderFactory(OrderFactory):
+    def create_order(self, amount: float) -> Order:
+        return DigitalOrder(amount)
+
+print("[Main] Starting the program")
+order_factory = PhysicalOrderFactory()
+order_factory.fulfill_order(100)
+order_factory = DigitalOrderFactory()
+order_factory.fulfill_order(100)
+print("[Main] Program ended")
+```
+
+Here is the output of the program:
+
+```
+[Main] Starting the program
+[PhysicalOrder] Processing order of $100
+[DigitalOrder] Processing order of $100
+[Main] Program ended
+```
+
+## Proxy Pattern
+Proxy Pattern is a structural design pattern that provides a surrogate or placeholder for another object to control access to it. This pattern is useful when you want to add a layer of security to an object or to control the access to an object.
+
+For example, you have a payment system for your e-commerce website and you want to add a layer of security to the payment system like logging, validation, etc and you want to control the access to the payment system. Here is an example of Proxy pattern in Python:
+
+```python
+class Payment:
+    def pay(self, amount: float) -> None:
+        pass
+
+
+class RealPayment(Payment):
+    def pay(self, amount: float) -> None:
+        print(f"[RealPayment] [Log] Successfully paid ${amount} with credit card.")
+
+class PaymentProxy(Payment):
+    def __init__(self):
+        self.real_payment = RealPayment()
+    
+    def pay(self, amount: float) -> None:
+        print(f"[Proxy] [Log] Payment request received for ${amount}.")
+        if amount > 100:
+            print(f"[Proxy] [Log] Payment failed: Amount is too high for ${amount}.")
+            return
+        self.real_payment.pay(amount)
+
+def main():
+    print("[Main] Starting the program")
+    payment_proxy = PaymentProxy()
+    payment_proxy.pay(100)
+    payment_proxy.pay(200)
+    print("[Main] Program ended")
+
+if __name__ == "__main__":
+    main()
+```
+
+Here is the output of the program:
+
+```
+[Main] Starting the program
+[Proxy] [Log] Payment request received for $100.
+[RealPayment] [Log] Successfully paid $100 with credit card.
+[Proxy] [Log] Payment request received for $200.
+[Proxy] [Log] Payment failed: Amount is too high for $200.
+[Main] Program ended
+```
+
+## Singleton Pattern
+Singleton Pattern is a creational design pattern that ensures that a class has only one instance and provides a global point of access to it. This pattern is useful when you want to ensure that a class has only one instance and you want to access it globally. 
+
+For example, you have a database logger for your e-commerce website and you want to ensure that there is only one instance of the database logger. Otherwise you will have multiple instances of the database logger and it's quite not efficient memory wise. With Singleton pattern, you can easily ensure that there is only one instance of the database logger. Here is an example of Singleton pattern in Python:
+
+```python
+class DatabaseLogger:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(DatabaseLogger, cls).__new__(cls)
+        return cls._instance
+    
+    def __init__(self):
+        if DatabaseLogger._initialized:
+            return
+        self.logs = []
+        DatabaseLogger._initialized = True
+    
+    def log(self, message: str):
+        self.logs.append(message)
+        print(f"[DatabaseLogger] [Log] {message}")
+
+print("[Main] Starting the program")
+logger1 = DatabaseLogger()
+logger1.log("Payment successful for $100")
+
+logger2 = DatabaseLogger()
+logger2.log("Payment failed for $200")
+
+print(f"[Main] logger1 and logger2 are the same instance: {logger1 is logger2}")
+print(f"[Main] logger1 logs: {logger1.logs}")
+print(f"[Main] logger2 logs: {logger2.logs}")
+
+print("[Main] Program ended")
+```
+
+Here is the output of the program:
+
+```
+[Main] Starting the program
+[DatabaseLogger] [Log] Payment successful for $100
+[DatabaseLogger] [Log] Payment failed for $200
+[Main] logger1 and logger2 are the same instance: True
+[Main] logger1 logs: ['Payment successful for $100', 'Payment failed for $200']
+[Main] logger2 logs: ['Payment successful for $100', 'Payment failed for $200']
+[Main] Program ended
+```

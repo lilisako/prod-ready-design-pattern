@@ -1,4 +1,3 @@
-
 class PaymentStrategy:
     def pay(self, amount: float) -> None:
         pass
