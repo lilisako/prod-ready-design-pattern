@@ -45,6 +45,12 @@ export default defineConfig({
           { text: 'Singleton', link: '/patterns/singleton' },
         ],
       },
+      {
+        text: 'Appendix',
+        items: [
+          { text: 'Layered Architecture', link: '/appendix/layered-architecture' },
+        ],
+      },
     ],
     socialLinks: [
       {
