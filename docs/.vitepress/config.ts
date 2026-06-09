@@ -5,13 +5,6 @@ export default defineConfig({
   description: 'Production-ready design patterns in Python with E-Commerce examples',
   base: '/',
   themeConfig: {
-    nav: [
-      { text: 'About', link: '/' },
-      {
-        text: 'GitHub',
-        link: 'https://github.com/lilisako/prod-ready-design-pattern',
-      },
-    ],
     sidebar: [
       {
         text: 'Guide',
@@ -50,12 +43,6 @@ export default defineConfig({
         items: [
           { text: 'Layered Architecture', link: '/appendix/layered-architecture' },
         ],
-      },
-    ],
-    socialLinks: [
-      {
-        icon: 'github',
-        link: 'https://github.com/lilisako/prod-ready-design-pattern',
       },
     ],
   },
